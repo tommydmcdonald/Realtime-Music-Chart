@@ -1,0 +1,29 @@
+{
+  "name": "realtime-music-chart",
+  "version": "1.0.0",
+  "description": "Real time music chart application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "server": "nodemon index.js",
+    "client": "npm run start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tommydmcdonald/Realtime-Music-Chart.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tommydmcdonald/Realtime-Music-Chart/issues"
+  },
+  "homepage": "https://github.com/tommydmcdonald/Realtime-Music-Chart#readme",
+  "devDependencies": {
+    "concurrently": "^3.5.1",
+    "nodemon": "^1.12.1"
+  },
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
