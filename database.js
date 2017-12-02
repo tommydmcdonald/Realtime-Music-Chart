@@ -1,10 +1,10 @@
-var mysql = require('mysql');
+const mysql = require('mysql');
 
-var con = mysql.createConnection({
+const con = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'nonenone',
-  database: 'RTC'
+  password: 'jpyfT_!=k6Ch',
+  database: 'rtc'
 });
 
 con.connect(function(err) {
