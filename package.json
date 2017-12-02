@@ -24,11 +24,16 @@
     "nodemon": "^1.12.1"
   },
   "dependencies": {
+    "axios": "^0.17.1",
     "body-parser": "^1.18.2",
+    "csvtojson": "^1.1.9",
     "express": "^4.16.2",
+    "lodash": "^4.17.4",
+    "month-days": "^2.1.0",
     "mysql": "^2.15.0",
     "pg": "^7.4.0",
     "react": "^16.2.0",
-    "react-scripts": "^1.0.17"
+    "react-scripts": "^1.0.17",
+    "request": "^2.83.0"
   }
 }
