@@ -10,6 +10,11 @@ const con = mysql.createConnection({
 con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
+  var sql = "CREATE DATABASE IF NOT EXISTS RTC";
+  con.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("Database created");
+  });
 var sql = "CREATE TABLE IF NOT EXISTS Song (rank INT PRIMARY KEY, song_name VARCHAR(255), url VARCHAR(255))";
   con.query(sql, function (err, result) {
     if (err) throw err;
