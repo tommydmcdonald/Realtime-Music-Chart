@@ -1,55 +1,43 @@
-const mysql = require('mysql');
+const mysql = require('promise-mysql');
 const _ = require('lodash');
 
-const con = mysql.createConnection({
-   host: 'localhost',
-   user: 'root',
-   password: 'nonenone',
-});
-
-con.connect(function(err) {
-   if (err) throw err;
-   console.log("Connected to server");
-
-   const createDB = "CREATE DATABASE IF NOT EXISTS RTC";
-   con.query(createDB, function (err, result) {
-      if (err) throw err;
-      console.log("Database created");
+const start = async () => {
+   const con = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: 'nonenone',
    });
 
-   const conDB = mysql.createConnection({
+   console.log('Connected to server');
+
+   const createDB = 'CREATE DATABASE IF NOT EXISTS RTC';
+   con.query(createDB, function (err, result) {
+      if (err) throw err;
+      console.log('Database created');
+   });
+
+   const conDB = await mysql.createConnection({
       host: 'localhost',
       user: 'root',
       password: 'nonenone',
       database: 'RTC'
    });
+  console.log('Connected to Database: RTC');
 
-  conDB.connect(function(err) {
-     if (err) throw err;
-     console.log("Connected to Database: RTC");
+  const createTables = [
+     'CREATE TABLE IF NOT EXISTS Song (rank INT PRIMARY KEY, song_name VARCHAR(255), url VARCHAR(255))',
+     'CREATE TABLE IF NOT EXISTS Artist (artist_name VARCHAR(255) PRIMARY KEY)',
+     'CREATE TABLE IF NOT EXISTS Stream_count (rank INT, stream_count INT, FOREIGN KEY(rank) REFERENCES Song(rank) ON UPDATE CASCADE)',
+     'CREATE TABLE IF NOT EXISTS Songs_artist (rank INT, artist_name VARCHAR(255), FOREIGN KEY(rank) REFERENCES Song(rank) ON UPDATE CASCADE)'
+  ];
 
-     const createTableSong = "CREATE TABLE IF NOT EXISTS Song (rank INT PRIMARY KEY, song_name VARCHAR(255), url VARCHAR(255))";
-     conDB.query(createTableSong, function (err, result) {
-        if (err) throw err;
-        console.log("Song table created");
-     });
+  const tableName = ['Song', 'Artist', 'Stream_count', 'Songs_artist'];
 
-     const createTableArtist = "CREATE TABLE IF NOT EXISTS Artist (artist_name VARCHAR(255) PRIMARY KEY)";
-     conDB.query(createTableArtist, function (err, result) {
-       if (err) throw err;
-       console.log("Artist table created");
-     });
+  for (let i = 0; i < createTables.length; i++) {
+     await conDB.query(createTables[i]); 
+     console.log('Created table ' + tableName[i]);
+  }
 
-     const createTableStreamCount = "CREATE TABLE IF NOT EXISTS Stream_count (rank INT, stream_count INT, FOREIGN KEY(rank) REFERENCES Song(rank) ON UPDATE CASCADE)";
-     conDB.query(createTableStreamCount, function (err, result) {
-       if (err) throw err;
-       console.log("Stream_count table created");
-     });
+}
 
-     const createTableSongsArtist = "CREATE TABLE IF NOT EXISTS Songs_artist (rank INT, artist_name VARCHAR(255), FOREIGN KEY(rank) REFERENCES Song(rank) ON UPDATE CASCADE)";
-     conDB.query(createTableSongsArtist, function (err, result) {
-       if (err) throw err;
-       console.log("Songs_artist table created");
-     });
-   });
-});
+start();
