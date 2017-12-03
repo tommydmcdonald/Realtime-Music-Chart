@@ -25,7 +25,7 @@ app.get('/rank/:sort/:rankNumber', async (req, res) => {
          break;
    }
 
-   const songsFromRank = `SELECT song_name FROM Song WHERE rank ${symbol} ${rankNumber}`;
+   const songsFromRank = `SELECT song_name, rank FROM Song WHERE rank ${symbol} ${rankNumber}`;
    const con = await mysql.createConnection({
       host: 'localhost',
       user: 'root',
