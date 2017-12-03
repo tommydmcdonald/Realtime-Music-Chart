@@ -51,9 +51,9 @@ app.get('/rank/:sort/:rankNumber', async (req, res) => {
 
 app.get('/artist/:artist', async (req, res) => {
    const artist = mysql.escape(req.params.artist);
-   console.log('artist = ', artist);
+
    const con = await createDBCon();
-   // const songsFromArtist= `SELECT song_name FROM Song AS s2 INNER JOIN Songs_artist ON s2.rank = Songs_artist.rank WHERE s2.artist_name = ${artist}`;
+
    const songsFromArtist =
    `SELECT Song.song_name, Song.rank, Songs_artist.artist_name
    FROM Song
