@@ -3,7 +3,7 @@ const { fetchJSON } = require('./parseCSV');
 const _ = require('lodash');
 const mysql = require('promise-mysql');
 
-const run = async () => {
+module.exports = async () => {
    const json = await fetchJSON();
    await initializeDB();
    const con = await createDBCon();
@@ -29,7 +29,4 @@ const run = async () => {
       const insertStreamCount = `INSERT INTO Stream_count (rank, stream_count) VALUES (${Position}, ${Streams})`;
       try { await con.query(insertStreamCount) } catch(err) {}
    });
-
 }
-
-run();
