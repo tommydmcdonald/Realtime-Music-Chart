@@ -1,84 +1,89 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../actions';
+import { search } from '../actions';
+import { bindActionCreators } from 'redux';
+import { Container, Row, Input, Navbar, Button } from 'react-materialize';
 import 'materialize-css/dist/css/materialize.css';
 import 'materialize-css/dist/js/materialize.js';
-import $ from 'jquery';
+
+import * as actions from '../actions';
 
 
 class RealTimeMusicChart extends Component {
+   constructor(props) {
+      super(props);
+      this.handleInputChange = this.handleInputChange.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
+      this.handleSelectChange = this.handleSelectChange.bind(this);
+
+      this.state = { input: '', view: ''};
+   }
+
    render() {
       return (
-         <div className="container">
+         <Container>
             {this.renderLogo()}
-            <div className="row valign-wrapper">
+            <Row className='valign-wrapper'>
                {this.renderInput()}
                {this.renderDropdown()}
                {this.renderButton()}
-            </div>
-         </div>
+            </Row>
+         </Container>
       );
    }
+
    renderLogo() {
       return (
-         <nav>
-            <div className="nav-wrapper">
-               <a href="#" className="brand-logo center">Real Time Music Chart</a>
-               <ul id="nav-mobile" class="left hide-on-med-and-down">
-               </ul>
-            </div>
-         </nav>
-      )
+         <Navbar><a className="brand-logo center">Real Time Music Chart</a></Navbar>
+      );
    }
 
    renderInput() {
       return (
-         <div className="input-field col s6">
-          <input placeholder="Input" id="first_name" type="text" className="validate" />
-        </div>
+         <Input placeholder='Input' s={6} value={this.state.input} onChange={this.handleInputChange}/>
       );
    }
 
    renderDropdown() {
-      this.initializeSelect();
       return (
-         <div className="input-field col s4">
-            <select>
-               <option value="" disabled selected>View</option>
-               <option value="1">All songs</option>
-               <option value="2">A song</option>
-               <option value="3">Songs with at least this many streams</option>
-               <option value="3">Songs above this rank</option>
-               <option value="3">Artists with this many songs in the top 200</option>
-               <option value="3">All songs from an artist</option>
-               <option value="3">All songs from artists</option>
-               <option value="3">All artists</option>
-               <option value="3">This many top artists ranked by playcount</option>
-               <option value="3">All artists above this total playcount</option>
-            </select>
-         </div>
+         <Input s={4} type='select' defaultValue='2' onChange={this.handleSelectChange} >
+            <option value='1'>Option 1</option>
+      		<option value='2'>Option 2</option>
+      		<option value='3'>Option 3</option>
+	     </Input>
       );
    }
 
    renderButton() {
       return (
-         <div className="col s2">
-            <a className="waves-effect waves-light btn">Search</a>
-         </div>
+         <Button waves='light' onClick={this.handleSubmit} s={2} >Search</Button>
       );
    }
 
-   initializeSelect() {
-      $(document).ready(function() {
-       $('select').material_select();
-     });
+   handleSelectChange(event) {
+      console.log('view');
+      this.setState({view: event.target.value})
    }
-}
 
+   handleInputChange(event) {
+      this.setState({input: event.target.value})
+   }
+
+   handleSubmit(event) {
+      const { input, view } = this.state;
+      this.props.search(input, view);
+      this.setState = { input: '', view: ''}
+   }
+
+}
 
 
 function mapStateToProps() {
-
+   return {};
 }
 
-export default connect(mapStateToProps, actions)(RealTimeMusicChart);
+function mapDispatchToProps(dispatch) {
+   return bindActionCreators({ search }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RealTimeMusicChart);
