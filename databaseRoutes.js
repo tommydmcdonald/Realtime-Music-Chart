@@ -34,21 +34,6 @@ app.get('/rank/:sort/:rankNumber', async (req, res) => {
    res.send(results);
 });
 
-// app.post('/artists', async (req, res) => {
-//    const { artists } = req.body;
-//    const allSongs = {};
-//
-//    const con = await createDBCon();
-//
-//    await _.forEach(artists, async (artist) => {
-//       artist = mysql.escape(artist);
-//       const songsFromArtist= `SELECT song_name FROM Song WHERE INNER JOIN Songs_artist ON Song.rank = Songs_artist.rank WHERE Songs_artist.artist_name = ${artist}`
-//       allSongs[artist] = await con.query(songsFromArtist);
-//    });
-//
-//    res.send(allSongs);
-// });
-
 app.get('/artist/:artist', async (req, res) => {
    const artist = mysql.escape(req.params.artist);
 
@@ -63,6 +48,30 @@ app.get('/artist/:artist', async (req, res) => {
 
    const songs = await con.query(songsFromArtist);
    res.send(songs);
+});
+
+app.post('/artists', async (req, res) => {
+   const { artists } = req.body;
+   const allSongs = {};
+
+   const con = await createDBCon();
+
+   for (artist of artists) {
+      artistSanitized = mysql.escape(artist);
+
+      const songsFromArtist =
+      `SELECT Song.song_name, Song.rank
+      FROM Song
+      INNER JOIN Songs_artist ON Songs_artist.rank = Song.rank
+      WHERE Songs_artist.artist_name = ${artistSanitized}
+      `;
+
+      allSongs[artist] = await con.query(songsFromArtist);
+   }
+
+   console.log('final', allSongs);
+
+   res.send(allSongs);
 });
 
 module.exports = app;
