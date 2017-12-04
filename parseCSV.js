@@ -3,7 +3,7 @@ const request = require('request');
 const mysql = require('mysql');
 const _ = require('lodash');
 
-const URL_CSV = 'https://spotifycharts.com/regional/global/daily/latest/download';
+const URL_CSV = 'https://spotifycharts.com/regional/us/daily/latest/download';
 
 const sanitizeJSON = (chartData) => {
    sanitizedChartData = [];
