@@ -5,6 +5,18 @@ const { createDBCon } = require('./database');
 
 const mysql = require('promise-mysql');
 
+//view all songs with rank, artist name
+app.get('/songs', async (req, res) => {
+   const songsFromArtist =
+   `SELECT Song.song_name, Song.rank, Songs_artist.artist_name
+   FROM Song
+   INNER JOIN Songs_artist ON Songs_artist.rank = Song.rank`;
+
+   const con = await createDBCon();
+   const songs = await con.query(songsFromArtist);
+   res.send(songs);
+});
+
 //view certain song's play count and artist
 app.get('/song/:name', async (req, res) => {
    const name = mysql.escape(req.params.name);
@@ -34,18 +46,6 @@ app.get('/song/count/:amount', async (req, res) => {
    const songs = await con.query(songsAboveStreamAmt);
    res.send(songs);
 })
-
-//view all songs with rank, artist name
-app.get('/songs', async (req, res) => {
-   const songsFromArtist =
-   `SELECT Song.song_name, Song.rank, Songs_artist.artist_name
-   FROM Song
-   INNER JOIN Songs_artist ON Songs_artist.rank = Song.rank`;
-
-   const con = await createDBCon();
-   const songs = await con.query(songsFromArtist);
-   res.send(songs);
-});
 
 //view all songs with certain rank with artist name
 app.get('/rank/:sort/:rankNumber', async (req, res) => {
@@ -114,7 +114,7 @@ app.get('/artists/songs/:amount', async (req, res) => {
       console.log(songAmt);
 
       if ( songAmt >= amount) {
-         artistsAboveAmount.push( { artist, amount: songAmt } )
+         artistsAboveAmount.push( { artist, count: songAmt } )
       }
    }
 
@@ -143,7 +143,7 @@ app.get('/artist/:artist', async (req, res) => {
 //all songs from all artists posted
 app.post('/artists', async (req, res) => {
    const { artists } = req.body;
-   const allSongs = {};
+   const allSongs = [];
 
    const con = await createDBCon();
 
@@ -151,15 +151,14 @@ app.post('/artists', async (req, res) => {
       artistSanitized = mysql.escape(artist);
 
       const songsFromArtist =
-      `SELECT Song.song_name, Song.rank
+      `SELECT Song.song_name, Song.rank, Songs_artist.artist_name
       FROM Song
       INNER JOIN Songs_artist ON Songs_artist.rank = Song.rank
       WHERE Songs_artist.artist_name = ${artistSanitized}`;
 
-      allSongs[artist] = await con.query(songsFromArtist);
+      const songs = await con.query(songsFromArtist)
+      songs.map( song => allSongs.push(song));
    }
-
-   console.log('final', allSongs);
 
    res.send(allSongs);
 });
@@ -169,7 +168,10 @@ app.get('/all_artists', async (req, res) => {
    const artists = `SELECT artist_name FROM Artist`;
    const con = await createDBCon();
    const allArtists = await con.query(artists);
-   res.send(allArtists);
+   const artistsRef = [];
+   allArtists.map( artist => artistsRef.push( {artist: artist.artist_name} ));
+
+   res.send(artistsRef);
 });
 
 //top X artists by playcount
